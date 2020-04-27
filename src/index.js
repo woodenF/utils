@@ -92,7 +92,28 @@ function throttle(func, wait, options) {
   };
   return throttle;
 }
+
+function judgeType() {
+  var class2Type = {};
+  'Boolean Number String Function Array Date RegExp Object Error'
+    .split(' ')
+    .map(function(item) {
+      class2Type[`[object ${item}]`] = item.toLowerCase();
+      return item;
+    });
+  return function(obj) {
+    console.log(typeof obj);
+    if (obj === null) {
+      return `${obj}`;
+    }
+    return typeof obj === 'object' || typeof obj === 'function' ?
+      class2Type[Object.prototype.toString.call(obj)] || 'object' :
+      typeof obj;
+  };
+}
+
 export default {
   debounce,
-  throttle
+  throttle,
+  judgeType: judgeType()
 };
