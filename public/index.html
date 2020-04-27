@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #container{
+        width: 100%;
+        height: 300px;
+        background: pink;
+    }
+</style>
+<body>
+    <div id="container"></div>
+    <button id="button">clear</button>
+</body>
+<script type="module">
+    import _ from '../src/index.js'
+    var count = 1;
+    var container = document.querySelector('#container');
+
+    function getUserAction(e) {
+        container.innerHTML = count++;
+    }
+
+    var setUserAction = _.debounce(getUserAction, 3000, true);
+
+    container.addEventListener('mousemove', setUserAction);
+    document.getElementById('button').addEventListener('click', function() {
+        setUserAction.cancel();
+    })
+    const a = { a: 1, b: { sd: 213 }, c: 3}
+    const b = _.shallowCopy(a);
+    a.a = 4;
+    a.b.sd = 131321
+    console.log(a, b)
+</script>
+</html>
