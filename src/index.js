@@ -4,7 +4,7 @@
  * @param {*} wait 等待时间
  * @param {*} immediate 是否立即执行
  */
-function debounce(func, wait, immediate) {
+const debounce = function(func, wait, immediate) {
   // 定时器
   var timeout;
   // 返回值
@@ -41,7 +41,7 @@ function debounce(func, wait, immediate) {
   };
 
   return debounced;
-}
+};
 
 /**
  *
@@ -49,7 +49,7 @@ function debounce(func, wait, immediate) {
  * @param {*} wait 等待时间
  * @param { leading 第一次是否立即执行, trailing 是否禁止停止触发后的回调 } options
  */
-function throttle(func, wait, options) {
+const throttle = function(func, wait, options) {
   var timeout; // 定时器
   var context; // this
   var args; // 参数列表
@@ -91,9 +91,13 @@ function throttle(func, wait, options) {
     }
   };
   return throttle;
-}
+};
 
-function judgeType() {
+/**
+ * 类型判断函数
+ * @param {*} obj 要判断的对象
+ */
+const judgeType = function() {
   var class2Type = {};
   'Boolean Number String Function Array Date RegExp Object Error'
     .split(' ')
@@ -102,7 +106,6 @@ function judgeType() {
       return item;
     });
   return function(obj) {
-    console.log(typeof obj);
     if (obj === null) {
       return `${obj}`;
     }
@@ -110,10 +113,46 @@ function judgeType() {
       class2Type[Object.prototype.toString.call(obj)] || 'object' :
       typeof obj;
   };
-}
+};
+
+/**
+ * 浅拷贝函数，不递归拷贝
+ * @param {*} obj 要拷贝的函数
+ */
+const shallowCopy = function(obj) {
+  // 只拷贝对象
+  if (typeof obj !== 'object') {
+    return;
+  }
+  // 判断obj的类型
+  var newObj = obj instanceof Array ? [] : {};
+  for(var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+};
+/**
+ * 深拷贝函数，递归
+ * @param {*} obj
+ */
+const deepCopy = function(obj) {
+  if (typeof obj !== 'object') {
+    return;
+  }
+  var newObj = obj instanceof Array ? [] : {};
+  for(var key in obj) {
+    if(Object.prototype.hasOwnProperty.call(obj, key)) {
+      newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+    }
+  }
+};
 
 export default {
   debounce,
   throttle,
-  judgeType: judgeType()
+  judgeType: judgeType(),
+  shallowCopy,
+  deepCopy
 };
