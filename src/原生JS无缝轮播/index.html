@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+html, body{
+    height: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: gainsboro;
+}
+#app{
+    width: 384px;
+    height: 216px;
+    overflow: hidden;
+}
+.img-container{
+    width: calc(384px * 6);
+    height: 100%;
+    font-size: 0;
+    transform: translateX(-384px);
+}
+
+</style>
+<body>
+    <div id="app">
+    </div>
+    <script type="module">
+        import Carousel from './index.js';
+        
+        const imgClick = function(e) {
+            console.log(e.target.src)
+        }
+
+        const carousel = new Carousel({
+            el: '#app',
+            images: ['./1.jpg', './2.jpg', './3.jpg', './4.jpg'],
+            suspendDuration: 1500,
+            transitionDuaration: 1000,
+            isSeamless: true,
+            clickFn: imgClick
+        })
+    </script>
+</body>
+</html>
