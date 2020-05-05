@@ -1,0 +1,25 @@
+@import '//at.alicdn.com/t/font_1798458_tr73kk5j4zh.css';
+
+.carousel-pagination{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 20px;
+    justify-content: center;
+}
+
+.carousel-pagination-bullet{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    margin-right: 5px;
+}
+.carousel-pagination-bullet:last-child{
+    margin-right: 0;
+}
+.carousel-pagination-bullet-active{
+    background: #007aff;
+}

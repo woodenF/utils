@@ -27,7 +27,10 @@ export default class Carousel {
         this.timer = null;
         // 生成的用以动画的子节点
         this.container = null;
-        this.appendChild();
+        // 分页器节点
+        this.paginationContainer = null;
+        this.appendCarouselNode();
+        this.appendPagination();
         this.startPlay();
     }
     /**
@@ -43,7 +46,7 @@ export default class Carousel {
     /**
      * 将轮播节点添加到目标节点当中
      */
-    appendChild() {
+    appendCarouselNode() {
         this.container = document.createElement('div');
         this.container.style = `
             width: ${this.images.length * this.elWidth}px;
@@ -64,24 +67,73 @@ export default class Carousel {
         this.listenContainer();
     }
     /**
+     * 添加分页器节点
+     */
+    appendPagination() {
+        const elPosition = window.getComputedStyle(this.el, null).position
+        this.el.style.position = elPosition !== 'static' || 'relative';
+        this.paginationContainer = document.createElement('div');
+        this.paginationContainer.classList.add('carousel-pagination')
+        this.paginationContainer.style = `
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        const len = this.isSeamless ? this.images.length - 2 : this.images.length;
+        for (let i = 0; i < len; i++) {
+            const bullet = document.createElement('span');
+            bullet.classList.add('carousel-pagination-bullet');
+            bullet.bulletIndex = i;
+            this.paginationContainer.appendChild(bullet);
+        }
+        this.el.appendChild(this.paginationContainer);
+        this.paginationContainer.addEventListener('click', (e) => {
+            const bulletIndex = this.isSeamless ? e.target.bulletIndex + 1 : e.target.bulletIndex;
+            bulletIndex && this.updatePosition(bulletIndex)
+        })
+    }
+    /**
+     * 更新当前状态节点
+     */
+    updateActiveBullet(position) {
+        const childNodes = [...this.paginationContainer.childNodes];
+        childNodes.map((item, idx) => {
+            if (idx === position) {
+                item.classList.add('carousel-pagination-bullet-active')
+            } else {
+                item.classList.remove('carousel-pagination-bullet-active')
+            }
+        })
+    }
+    /**
      * 开始播放
      */
     startPlay() {
         if (!this.isSeamless) {
             return;
         }
+        this.updateActiveBullet(this.isSeamless ? this.position - 1 : this.position)
         // 定时器调用时间等于过渡时间 + 停留时间
         const time = this.suspendDuration + this.transitionDuaration;
         this.timer = setInterval(() => {
-            this.position++;
-            this.container.style = this.getStyleByPostion(this.transitionDuaration);
-            if (this.position === this.images.length - 1) {
-                this.position = 1;
-                setTimeout(() => {
-                    this.container.style = this.getStyleByPostion(0);
-                }, this.transitionDuaration);
-            }
+            this.updatePosition(++this.position)
         }, time);
+    }
+    /**
+     * 修改position
+     */
+    updatePosition(position) {
+        this.position = position;
+        this.container.style = this.getStyleByPostion(this.transitionDuaration);
+        if (this.position === this.images.length - 1) {
+            this.position = 1;
+            setTimeout(() => {
+                this.container.style = this.getStyleByPostion(0);
+            }, this.transitionDuaration);
+        }
+        const bulletIndex = this.isSeamless ? this.position - 1 : this.position
+        this.updateActiveBullet(bulletIndex);
     }
     /**
      * 停止播放
@@ -106,10 +158,10 @@ export default class Carousel {
      * 监听container事件
      */
     listenContainer() {
-        this.container.addEventListener('mouseover', () => {
+        this.el.addEventListener('mouseover', () => {
             this.stopPlay();
         })
-        this.container.addEventListener('mouseout', () => {
+        this.el.addEventListener('mouseout', () => {
             this.startPlay();
         })
         this.container.addEventListener('click', (e) => {
