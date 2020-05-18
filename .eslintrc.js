@@ -60,8 +60,6 @@ module.exports = {
     'array-callback-return': 'error',
     // 把 var 语句看作是在块级作用域范围之内
     'block-scoped-var': 'error',
-    // 强制类方法使用 this
-    'class-methods-use-this': 'error',
     // 要求遵循大括号约定
     'curly': 'error',
     // 要求 Switch 语句中有 Default 分支
