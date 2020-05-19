@@ -1,0 +1,38 @@
+body{
+  height: 100vh;
+  margin: 0;
+}
+
+.item{
+  height: 50px;
+  border-bottom: 1px solid #eee;
+}
+.item:nth-child(odd){
+  background: gainsboro;
+}
+.item:nth-child(even){
+  background: yellow;
+}
+#app{
+  position: relative;
+  height: 100%;
+}
+.container{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(100% + 100px);
+  overflow-y: auto;
+  top: -100px;
+}
+
+.refresh{
+  height: 100px;
+  background: pink;
+  display: flex;
+  box-sizing: border-box;
+  padding-bottom: 20px;
+  align-items: flex-end;
+  justify-content: center;
+}
