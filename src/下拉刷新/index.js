@@ -1,70 +1,79 @@
-const container = document.querySelector('.refresh-container');
-const refresh = document.querySelector('.refresh');
+export default class DownRefresh {
+  constructor({
+    el,
+    refreshEl,
+  // eslint-disable-next-line no-undef
+  } = options) {
+    // 下拉刷新的容器节点
+    this.el = el;
+    // 下拉刷新的展示节点
+    this.refreshEl = refreshEl;
+    this.refreshElHeight = this.refreshEl.offsetHeight;
+    // 是否可下拉展示下拉刷新组件
+    this.downStatus = false;
+    // 下拉刷新的开始触摸点
+    this.startY = null;
+    // 参与每一次计算的结束触摸点
+    this.distance = null;
+    this.initStyle();
+    this.listener();
+  }
+  initStyle() {
+    this.el.style.top = `-${this.refreshElHeight}px`;
+  }
+  listener() {
+    this.el.addEventListener('touchstart', (e) => {
+      if (!this.getScrollTop()) {
+        this.downStatus = true;
+        this.startY = e.touches[0].clientY;
+      }
+    });
+    this.el.addEventListener('touchmove', (e) => {
+      if (!this.getScrollTop() && !this.startY) {
+        this.startY = e.touches[0].clientY;
+        this.downStatus = true;
+        this.el.style.overflowY = 'hidden';
+      }
+      console.log(this.el.style.top, `-${this.refreshElHeight}px`);
+      if(!this.downStatus) {
+        return;
+      }
+      const endY = e.touches[0].clientY;
+      this.distance = endY - this.startY;
+      this.distance = this.distance > this.refreshElHeight ?
+        this.refreshElHeight :
+        this.distance < 0 ?
+          0 :
+          this.distance;
+      this.setTopStyle(-this.refreshElHeight + this.distance, 0);
+    });
+    this.el.addEventListener('touchend', () => {
+      this.startY = null;
+      this.downStatus = false;
+      this.setTopStyle(-this.refreshElHeight, .5);
+      this.el.style.overflowY = 'auto';
+    });
+  }
+  setTopStyle(top = -this.refreshElHeight, duration = .5) {
+    console.log(top);
+    this.el.style.top = `${top}px`;
+    this.el.style.transition = `${duration}s linear`;
+  }
+  /**
+   * 阻止浏览器的默认事件
+   * 此处用来阻止下拉刷新时的列表默认滑动
+   * @param {*} e
+   */
+  stopSlide(e) {
+    // e.preventDefault && e.preventDefault();
+    e.stopPropagation && e.stopPropagation();
+  }
+  /**
+   * 获得节点滚动条距离顶部距离
+   * 为0则为可下拉展示下拉刷新组件
+   */
+  getScrollTop(){
+    return this.el.scrollTop;
+  }
+}
 
-container.addEventListener('scroll', (e) => {
-  console.log('距离顶部高度', container.scrollTop);
-  console.log('滚动条高度', container.scrollHeight);
-  console.log('内容高度', container.offsetHeight);
-});
-
-let startMoveY = null;
-let endMoveY = 0;
-let isRefresh = false;
-
-container.addEventListener('touchstart', (e) => {
-  isRefresh = true;
-  if (getScrollTop(document.querySelector('.content'))) {
-    return;
-  }
-  startMoveY = e.touches[0].clientY;
-});
-
-container.addEventListener('touchmove', (e) => {
-  if (getScrollTop(document.querySelector('.content'))) {
-    startMoveY = startMoveY || e.touches[0].clientY;
-    return;
-  }
-  if(!isRefresh) {
-    return;
-  }
-  endMoveY = e.touches[0].clientY;
-  const distance = endMoveY - startMoveY;
-  console.log(startMoveY, endMoveY, distance);
-  let offsetY = distance - 100;
-  if (offsetY > 0) {
-    offsetY = 0;
-  }
-  if (offsetY < -100) {
-    offsetY = -100;
-  }
-  container.style = `
-    top:${offsetY}px;
-  `;
-  if(offsetY > -20) {
-    refresh.innerHTML= '松开刷新';
-  } else {
-    refresh.innerHTML= '下拉刷新';
-  }
-});
-container.addEventListener('touchend', (e) => {
-  isRefresh = false;
-  const distance = endMoveY - startMoveY;
-  const offsetY = distance - 100 > 0 ? 0 : distance - 100 < -100 ? -100 : distance - 100;
-  if (offsetY > -20) {
-    setTimeout(() => {
-      container.style = `
-        top: ${-100}px;
-        transition: 1s;
-      `;
-    }, 3000);
-  } else {
-    container.style = `
-      top: ${-100}px;
-      transition: 1s;
-    `;
-  }
-
-});
-const getScrollTop = function(el) {
-  return el.scrollTop;
-};
