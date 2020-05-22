@@ -17,16 +17,19 @@ body{
   position: relative;
   height: 100%;
 }
-.container{
+.refresh-container{
   position: absolute;
   top: 0;
   bottom: 0;
   width: 100%;
   height: calc(100% + 100px);
-  overflow-y: auto;
   top: -100px;
 }
-
+.content{
+  max-height: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
 .refresh{
   height: 100px;
   background: pink;
